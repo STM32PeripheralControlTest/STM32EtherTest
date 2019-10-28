@@ -200,16 +200,16 @@ void startSocketServerTask(const void* argument)
 {
   MX_LWIP_Init();
 
-
   int sockfd = lwip_socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
-  
+
   struct sockaddr_in reader_addr;
   memset(&reader_addr, 0, sizeof(reader_addr));
   reader_addr.sin_family = AF_INET;
   reader_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+//  reader_addr.sin_addr.s_addr = htonl("163.50.137.48");
   reader_addr.sin_port = htons(80);
 
-  int status = bind(sockfd, &reader_addr, sizeof(reader_addr));
+  volatile int status = bind(sockfd, (struct sockaddr*)&reader_addr, sizeof(reader_addr));
 
   if(status >= 0){
     status = listen(sockfd, 5);
@@ -219,6 +219,18 @@ void startSocketServerTask(const void* argument)
     struct sockaddr_in client_addr;
     int client_addr_len;
     int clientfd = accept(sockfd, &client_addr, &client_addr_len);
+  }
+
+  while(1){
+    volatile int result = 0;
+
+    if(result < 10){
+      result++;
+    }
+    else{
+      result = 0;
+    }
+
   }
 
   
