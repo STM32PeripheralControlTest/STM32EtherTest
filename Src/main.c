@@ -71,7 +71,7 @@ void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
 /* Private function prototypes -----------------------------------------------*/
-void startSocketServerTask(const void* argument);
+//void startSocketServerTask(const void* argument);
 
 /* USER CODE END PFP */
 
@@ -109,9 +109,9 @@ int main(void)
   /* Initialize all configured peripherals */
   MX_GPIO_Init();
   /* USER CODE BEGIN 2 */
-  osThreadId startSocketServerTaskHandle;
-  osThreadDef(socketTask, startSocketServerTask, osPriorityNormal, 0, 512); 
-  startSocketServerTaskHandle = osThreadCreate(osThread(socketTask), NULL);
+  //osThreadId startSocketServerTaskHandle;
+  //osThreadDef(socketTask, startSocketServerTask, osPriorityNormal, 0, 128); 
+  //startSocketServerTaskHandle = osThreadCreate(osThread(socketTask), NULL);
 
   /* USER CODE END 2 */
 
@@ -196,42 +196,46 @@ void SystemClock_Config(void)
 
 /* USER CODE BEGIN 4 */
 
-void startSocketServerTask(const void* argument)
-{
-  MX_LWIP_Init();
+// void startSocketServerTask(const void* argument)
+// {
+//   //MX_LWIP_Init();
 
-  int sockfd = lwip_socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+//   /*
 
-  struct sockaddr_in reader_addr;
-  memset(&reader_addr, 0, sizeof(reader_addr));
-  reader_addr.sin_family = AF_INET;
-  reader_addr.sin_addr.s_addr = htonl(INADDR_ANY);
-//  reader_addr.sin_addr.s_addr = htonl("163.50.137.48");
-  reader_addr.sin_port = htons(80);
+//   int sockfd = lwip_socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
 
-  volatile int status = bind(sockfd, (struct sockaddr*)&reader_addr, sizeof(reader_addr));
+//   struct sockaddr_in reader_addr;
+//   memset(&reader_addr, 0, sizeof(reader_addr));
+//   reader_addr.sin_family = AF_INET;
+//   reader_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+// //  reader_addr.sin_addr.s_addr = htonl("163.50.137.48");
+//   reader_addr.sin_port = htons(80);
 
-  if(status >= 0){
-    status = listen(sockfd, 5);
-  }
+//   volatile int status = bind(sockfd, (struct sockaddr*)&reader_addr, sizeof(reader_addr));
 
-  if(status >= 0){
-    struct sockaddr_in client_addr;
-    int client_addr_len;
-    int clientfd = accept(sockfd, &client_addr, &client_addr_len);
-  }
+//   if(status >= 0){
+//     status = listen(sockfd, 5);
+//   }
 
-  while(1){
-    volatile int result = 0;
+//   if(status >= 0){
+//     struct sockaddr_in client_addr;
+//     int client_addr_len;
+//     int clientfd = accept(sockfd, &client_addr, &client_addr_len);
+//   }
 
-    if(result < 10){
-      result++;
-    }
-    else{
-      result = 0;
-    }
+//   while(1){
+//     volatile int result = 0;
 
-  }
+//     if(result < 10){
+//       result++;
+//     }
+//     else{
+//       result = 0;
+//     }
+
+//   }
+
+//   */
 
   
 
@@ -239,7 +243,7 @@ void startSocketServerTask(const void* argument)
 
   
 
-}
+// }
 /* USER CODE END 4 */
 
 /**

@@ -56,7 +56,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */     
-
+#include "lwip/sockets.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -76,13 +76,14 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+osThreadId startSocketServerTaskHandle;
+int isInitializedFinished = 0;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
-   
+void startSocketServerTask(const void* argument);
 /* USER CODE END FunctionPrototypes */
 
 void StartDefaultTask(void const * argument);
@@ -120,6 +121,8 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
+  osThreadDef(socketTask, startSocketServerTask, osPriorityNormal, 0, 512); 
+  startSocketServerTaskHandle = osThreadCreate(osThread(socketTask), NULL);
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -143,6 +146,41 @@ void StartDefaultTask(void const * argument)
   MX_USB_DEVICE_Init();
 
   /* USER CODE BEGIN StartDefaultTask */
+  isInitializedFinished = 1;
+//   int sockfd = lwip_socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+//   struct sockaddr_in reader_addr;
+//   memset(&reader_addr, 0, sizeof(reader_addr));
+//   reader_addr.sin_family = AF_INET;
+//   reader_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+// //  reader_addr.sin_addr.s_addr = htonl("163.50.137.48");
+//   reader_addr.sin_port = htons(80);
+
+//   volatile int status = bind(sockfd, (struct sockaddr*)&reader_addr, sizeof(reader_addr));
+
+//   if(status >= 0){
+//     status = listen(sockfd, 5);
+//   }
+
+//   if(status >= 0){
+//     struct sockaddr_in client_addr;
+//     int client_addr_len;
+//     int clientfd = accept(sockfd, &client_addr, &client_addr_len);
+//   }
+
+//   while(1){
+//     volatile int result = 0;
+
+//     if(result < 10){
+//       result++;
+//     }
+//     else{
+//       result = 0;
+//     }
+
+//   }
+
+
   /* Infinite loop */
   for(;;)
   {
@@ -153,7 +191,43 @@ void StartDefaultTask(void const * argument)
 
 /* Private application code --------------------------------------------------*/
 /* USER CODE BEGIN Application */
-     
+void startSocketServerTask(const void* argument)
+{
+  while(isInitializedFinished == 0);
+
+  int sockfd = lwip_socket(PF_INET, SOCK_STREAM, IPPROTO_TCP);
+
+  struct sockaddr_in reader_addr;
+  memset(&reader_addr, 0, sizeof(reader_addr));
+  reader_addr.sin_family = AF_INET;
+  reader_addr.sin_addr.s_addr = htonl(INADDR_ANY);
+  // reader_addr.sin_addr.s_addr = htonl("163.50.137.48");
+  reader_addr.sin_port = htons(80);
+
+  volatile int status = bind(sockfd, (struct sockaddr*)&reader_addr, sizeof(reader_addr));
+
+  if(status >= 0){
+    status = listen(sockfd, 5);
+  }
+
+  if(status >= 0){
+    struct sockaddr_in client_addr;
+    int client_addr_len;
+    int clientfd = accept(sockfd, &client_addr, &client_addr_len);
+  }
+
+  while(1){
+    volatile int result = 0;
+
+    if(result < 10){
+      result++;
+    }
+    else{
+      result = 0;
+    }
+
+  }
+}
 /* USER CODE END Application */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
